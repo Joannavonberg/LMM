@@ -15,7 +15,7 @@ LoadData <- function(nchroms=22, df_name_base="imputed_chr_", path="bolt.stats.g
 
 MakeManhattan <- function(concat, save = FALSE, fn = NA){
   if(save){png(fn)}
-  manhattan(concat, p = "P_BOLT_LMM_INF", ylim = c(0,25), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
+  manhattan(concat, p = "P_BOLT_LMM_INF", ylim = c(0,30), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
   if(save){dev.off()}
 }
 
@@ -40,7 +40,7 @@ plotQQ <- function(z,color,cex){
 }
 
 
-MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
+MakeMAFQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
   S <- concat
   S$FRQ <- S$A1FREQ
   S$P <- S$P_BOLT_LMM_INF
@@ -67,7 +67,6 @@ MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
   
   if(save){png(fn)}
   
-  mx <- 25
   plot(c(0,mx), c(0,mx), col="gray25", lwd=3, type="l", xlab="Expected Distribution (-log10 of P value)", ylab="Observed Distribution (-log10 of P value)", xlim=c(0,mx), ylim=c(0,mx), las=1, xaxs="i", yaxs="i", bty="l",main=c(substitute(paste("QQ plot: ",lambda," = ", lam),list(lam = lambda)),expression()))
   
   plotQQ(z,rgb(255,79,0,maxColorValue=255),0.4)
@@ -89,7 +88,7 @@ MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
   if(save){dev.off()}
 }
 
-MakeInfoQQ <- function(concat, save = FALSE, fn = NA){
+MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
   S <- concat
   S$P <- S$P_BOLT_LMM_INF
   
@@ -120,7 +119,6 @@ MakeInfoQQ <- function(concat, save = FALSE, fn = NA){
   
   if(save){png(fn)}
   
-  mx <- 25
   plot(c(0,mx), c(0,mx), col="black", lwd=3, type="l", xlab="Expected Distribution (-log10 of P value)", ylab="Observed Distribution (-log10 of P value)", xlim=c(0,mx), ylim=c(0,mx), las=1, xaxs="i", yaxs="i", bty="l",main=c(substitute(paste("QQ plot: ",lambda," = ", lam),list(lam = lambda)),expression()))
   
   
