@@ -13,9 +13,9 @@ LoadData <- function(nchroms=22, df_name_base="imputed_chr_", path="bolt.stats.g
   }
 }
 
-MakeManhattan <- function(concat, save = FALSE, fn = NA){
+MakeManhattan <- function(concat, save = FALSE, fn = NA, pcol = "P_BOLT_LMM_INF"){
   if(save){png(fn)}
-  manhattan(concat, p = "P_BOLT_LMM_INF", ylim = c(0,30), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
+  manhattan(concat, p = pcol, ylim = c(0,30), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
   if(save){dev.off()}
 }
 
@@ -40,10 +40,10 @@ plotQQ <- function(z,color,cex){
 }
 
 
-MakeMAFQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
+MakeMAFQQ <- function(concat, save = FALSE, fn = NA, mx = 25, freqcol = "A1FREQ", pcol = "P_BOLT_LMM_INF"){
   S <- concat
-  S$FRQ <- S$A1FREQ
-  S$P <- S$P_BOLT_LMM_INF
+  S$FRQ <- S[,freqcol]
+  S$P <- S[,pcol]
   
   pvals_lo1=subset(S,(S$FRQ > 0.20 & S$FRQ < 0.8))
   pvals_lo2=subset(S,((S$FRQ < 0.20 & S$FRQ > 0.05) | (S$FRQ > 0.8 & S$FRQ < 0.95)))
@@ -88,9 +88,10 @@ MakeMAFQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
   if(save){dev.off()}
 }
 
-MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
+MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25, infocol = "INFO", pcol = "P_BOLT_LMM_INF"){
   S <- concat
-  S$P <- S$P_BOLT_LMM_INF
+  S$INFO <- S[,infocol]
+  S$P <- S[,pcol]
   
   pvals_lo0=subset(S,(S$INFO > 1.1))
   pvals_lo1=subset(S,(S$INFO > 0.9 & S$INFO < 1.1))
