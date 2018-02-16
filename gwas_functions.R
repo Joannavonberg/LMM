@@ -120,9 +120,7 @@ MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25){
   if(save){png(fn)}
   
   plot(c(0,mx), c(0,mx), col="black", lwd=3, type="l", xlab="Expected Distribution (-log10 of P value)", ylab="Observed Distribution (-log10 of P value)", xlim=c(0,mx), ylim=c(0,mx), las=1, xaxs="i", yaxs="i", bty="l",main=c(substitute(paste("QQ plot: ",lambda," = ", lam),list(lam = lambda)),expression()))
-  
-  
-  
+   
   #lapply(list("lightpink2", "purple", "deepskyblue1", "slateblue3", "olivedrab2"), plotQQ)
   
   plotQQ(z,rgb(255,79,0,maxColorValue=255),0.4)
