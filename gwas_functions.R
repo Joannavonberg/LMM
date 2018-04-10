@@ -156,3 +156,17 @@ h2_and_snpcount <- function(corr_factor=5e6, snp_counts=NULL, ylim=c(0,20)){
   axis(4, at = seq(0, 0.25, by = 0.05), labels = seq(0,0.25*corr_factor,by = 0.05*corr_factor))
   mtext(text = "SNP-count", side = 4, line = 2)
 }
+
+NrOfSignificantHits <- function(dfname, threshold = 1e-8, pcol = "P_BOLT_LMM_INF"){
+  return(sum(get(dfname)[,pcol] < threshold))
+}
+
+NrOfSignificantHits_vectorized <- Vectorize(NrOfSignificantHits, vectorize.args = "dfname")
+
+PvalAtKnownHits <- function(dfname, hits = 1:6, pcol = "P_BOLT_LMM_INF", minuslog = F){
+  if(minuslog){func <- function(x){return(-log(x))}}
+  else{func <- function(x){return(x)}}
+  return(func(mean(get(dfname)[hits,pcol])))
+}
+
+PvalAtKnownHits_vectorized <- Vectorize(PvalAtKnownHits, vectorize.args = "dfname")
