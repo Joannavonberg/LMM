@@ -13,9 +13,9 @@ LoadData <- function(nchroms=22, df_name_base="imputed_chr_", path="bolt.stats.g
   }
 }
 
-MakeManhattan <- function(concat, save = FALSE, fn = NA){
+MakeManhattan <- function(concat, save = FALSE, fn = NA, pcol = "P_BOLT_LMM_INF"){
   if(save){png(fn)}
-  manhattan(concat, p = "P_BOLT_LMM_INF", ylim = c(0,25), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
+  manhattan(concat, p = pcol, ylim = c(0,30), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
   if(save){dev.off()}
 }
 
@@ -40,10 +40,10 @@ plotQQ <- function(z,color,cex){
 }
 
 
-MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
+MakeMAFQQ <- function(concat, save = FALSE, fn = NA, mx = 25, freqcol = "A1FREQ", pcol = "P_BOLT_LMM_INF"){
   S <- concat
-  S$FRQ <- S$A1FREQ
-  S$P <- S$P_BOLT_LMM_INF
+  S$FRQ <- S[,freqcol]
+  S$P <- S[,pcol]
   
   pvals_lo1=subset(S,(S$FRQ > 0.20 & S$FRQ < 0.8))
   pvals_lo2=subset(S,((S$FRQ < 0.20 & S$FRQ > 0.05) | (S$FRQ > 0.8 & S$FRQ < 0.95)))
@@ -67,7 +67,6 @@ MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
   
   if(save){png(fn)}
   
-  mx <- 25
   plot(c(0,mx), c(0,mx), col="gray25", lwd=3, type="l", xlab="Expected Distribution (-log10 of P value)", ylab="Observed Distribution (-log10 of P value)", xlim=c(0,mx), ylim=c(0,mx), las=1, xaxs="i", yaxs="i", bty="l",main=c(substitute(paste("QQ plot: ",lambda," = ", lam),list(lam = lambda)),expression()))
   
   plotQQ(z,rgb(255,79,0,maxColorValue=255),0.4)
@@ -89,9 +88,10 @@ MakeMAFQQ <- function(concat, save = FALSE, fn = NA){
   if(save){dev.off()}
 }
 
-MakeInfoQQ <- function(concat, save = FALSE, fn = NA){
+MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25, infocol = "INFO", pcol = "P_BOLT_LMM_INF"){
   S <- concat
-  S$P <- S$P_BOLT_LMM_INF
+  S$INFO <- S[,infocol]
+  S$P <- S[,pcol]
   
   pvals_lo0=subset(S,(S$INFO > 1.1))
   pvals_lo1=subset(S,(S$INFO > 0.9 & S$INFO < 1.1))
@@ -120,11 +120,8 @@ MakeInfoQQ <- function(concat, save = FALSE, fn = NA){
   
   if(save){png(fn)}
   
-  mx <- 25
   plot(c(0,mx), c(0,mx), col="black", lwd=3, type="l", xlab="Expected Distribution (-log10 of P value)", ylab="Observed Distribution (-log10 of P value)", xlim=c(0,mx), ylim=c(0,mx), las=1, xaxs="i", yaxs="i", bty="l",main=c(substitute(paste("QQ plot: ",lambda," = ", lam),list(lam = lambda)),expression()))
-  
-  
-  
+   
   #lapply(list("lightpink2", "purple", "deepskyblue1", "slateblue3", "olivedrab2"), plotQQ)
   
   plotQQ(z,rgb(255,79,0,maxColorValue=255),0.4)
