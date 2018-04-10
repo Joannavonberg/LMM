@@ -147,3 +147,15 @@ MakeInfoQQ <- function(concat, save = FALSE, fn = NA){
   if(save){dev.off()}
   
 }
+
+h2_and_snpcount <- function(corr_factor=5e6, snp_counts=NULL, ylim=c(0,20)){
+  if(is.null(snp_counts)){
+    snp_counts <- scan("/Users/jvonberg/git/LMM/snp_counts.txt")
+  }
+  par(mar = c(5,5,5,5))
+  h2_bar <- barplot(h2s, ylim = ylim, names.arg = 1:22, xlab = "chromosome", ylab = "heritability (h2)", main = "Heritability for a certain left-out chromosome")
+  lines(x = h2_bar, y = snp_counts/corr_factor, col = "purple", lwd = 2)
+  points(x = h2_bar, y = snp_counts/corr_factor, col = "purple", cex = 0.6)
+  axis(4, at = seq(0, 0.25, by = 0.05), labels = seq(0,0.25*corr_factor,by = 0.05*corr_factor))
+  mtext(text = "SNP-count", side = 4, line = 2)
+}
