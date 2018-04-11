@@ -166,7 +166,7 @@ NrOfSignificantHits_vectorized <- Vectorize(NrOfSignificantHits, vectorize.args 
 PvalAtKnownHits <- function(dfname, hits = 1:6, pcol = "P_BOLT_LMM_INF", minuslog = F){
   if(minuslog){func <- function(x){return(-log(x))}}
   else{func <- function(x){return(x)}}
-  return(func(mean(get(dfname)[hits,pcol])))
+  return(func(get(dfname)[hits,pcol]))
 }
 
 PvalAtKnownHits_vectorized <- Vectorize(PvalAtKnownHits, vectorize.args = "dfname")
