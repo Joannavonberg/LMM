@@ -1,21 +1,12 @@
 library(qqman)
 
-endsWith <- function(x, suffix){
-  n <- nchar(x)
-  return(substr(x, n - nchar(suffix) + 1L, n) == suffix)
-}
-
-LoadData <- function(nchroms=22, df_name_base="imputed_chr_", path="bolt.stats.group4.EUR/bolt.chr", file_suffix=".stats"){
-  print(file_suffix)
-  if (endsWith(file_suffix, ".gz")) {func <- gzfile; print("this is a .gz file, will use gzfile() function")} else {func <- file}
-  print(func)
-  chrs <- 1:nchroms
+LoadData <- function(df_name_base="imputed_chr_", path="bolt.stats.group4.EUR/bolt.chr", file_suffix=".stats", chrs=1:22){
   for(c in chrs){
     print(c)
     df_name <- sprintf("%s%i", df_name_base, c)
     assign(
       df_name, 
-      read.table(func(description=sprintf("%s%i%s", path, c, file_suffix), open = "r"), header = T),
+      read.table(sprintf("%s%i%s", path, c, file_suffix), header = T),
       envir = .GlobalEnv
     )
   }
@@ -152,29 +143,3 @@ MakeInfoQQ <- function(concat, save = FALSE, fn = NA, mx = 25, infocol = "INFO",
   if(save){dev.off()}
   
 }
-
-h2_and_snpcount <- function(corr_factor=5e6, snp_counts=NULL, ylim=c(0,20)){
-  if(is.null(snp_counts)){
-    snp_counts <- scan("/Users/jvonberg/git/LMM/snp_counts.txt")
-  }
-  par(mar = c(5,5,5,5))
-  h2_bar <- barplot(h2s, ylim = ylim, names.arg = 1:22, xlab = "chromosome", ylab = "heritability (h2)", main = "Heritability for a certain left-out chromosome")
-  lines(x = h2_bar, y = snp_counts/corr_factor, col = "purple", lwd = 2)
-  points(x = h2_bar, y = snp_counts/corr_factor, col = "purple", cex = 0.6)
-  axis(4, at = seq(0, 0.25, by = 0.05), labels = seq(0,0.25*corr_factor,by = 0.05*corr_factor))
-  mtext(text = "SNP-count", side = 4, line = 2)
-}
-
-NrOfSignificantHits <- function(dfname, threshold = 1e-8, pcol = "P_BOLT_LMM_INF"){
-  return(sum(get(dfname)[,pcol] < threshold))
-}
-
-NrOfSignificantHits_vectorized <- Vectorize(NrOfSignificantHits, vectorize.args = "dfname")
-
-PvalAtKnownHits <- function(dfname, hits = 1:6, pcol = "P_BOLT_LMM_INF", minuslog = F){
-  if(minuslog){func <- function(x){return(-log10(x))}}
-  else{func <- function(x){return(x)}}
-  return(func(get(dfname)[hits,pcol]))
-}
-
-PvalAtKnownHits_vectorized <- Vectorize(PvalAtKnownHits, vectorize.args = "dfname")
