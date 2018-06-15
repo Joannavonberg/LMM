@@ -21,8 +21,9 @@ LoadData <- function(nchroms=22, df_name_base="imputed_chr_", path="bolt.stats.g
   }
 }
 
-MakeManhattan <- function(concat, save = FALSE, fn = NA, pcol = "P_BOLT_LMM_INF"){
+MakeManhattan <- function(concat, save = FALSE, fn = NA, pcol = "P_BOLT_LMM_INF", rmsnps = NULL, snpcolnr = 1){
   if(save){png(fn)}
+  if(!is.null(rmsnps)){concat <- concat[!(concat[,snpcolnr] %in% rmsnps),]}
   manhattan(concat, p = pcol, ylim = c(0,30), col = c(rgb(154, 137, 168, maxColorValue = 255), "lightgrey"))
   if(save){dev.off()}
 }
