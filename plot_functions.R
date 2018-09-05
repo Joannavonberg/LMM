@@ -1,19 +1,48 @@
 options(stringsAsFactors = F)
+library(extraDistr)
 
-overlap <- function(p, i, j){
-  sign_i <- (mat[,i] < (1*10^(-p)))
-  sign_j <- (mat[,j] < (1*10^(-p)))
-  #n <- sum(sign_i)
-  overlap <- sum(sign_i & sign_j)
-  m <- sum(sign_i)
-  n <- 10437951-m
-  k <- sum(sign_j)
-  #pval <- binom.test(overlap, sum(sign_j), p)$p.value
-  pval <- phyper(q = overlap, m = m, n = n, k = k, lower.tail = F, log.p = T)
+overlap <- function(pthres, z1, z2){
+  zthres <- abs(qnorm(p = pthres))
+  #hi1 <- z1 > zthres | z1 < -zthres
+  #hi2 <- z2 > zthres | z2 < -zthres
+  #overlap <- sum(hi1 & hi2 & (sign(z1) == sign(z2)))
+  # is equivalent to:
+  red_urn <- z1 > zthres
+  red_draw <- red_urn & (z2 > zthres)
+  blue_urn <- z1 < -zthres
+  blue_draw <- blue_urn & (z2 < -zthres)
+  overlap <- sum(red_draw | blue_draw)
+  sum_black_urn <- 10437951 - sum(red_urn) - sum(blue_urn)
+  nsign_draw <- sum(z2 > zthres | z2 < -zthres)
+  sum_black_draw <- nsign_draw - overlap
+  x <- c(sum(red_draw), sum(blue_draw), sum_black_draw)
+  n <- c(sum(red_urn), sum(blue_urn), sum_black_urn)
+  k <- nsign_draw
+  pval <- dmvhyper(x, n, k, log = FALSE)
   names(overlap) <- pval
-  return(overlap)
- # return(list(overlap = overlap, log.pval = pval))
 }
+
+# overlap <- function(pthres, z1, z2){
+#   p1 <- 2 * pnorm(-abs(z1))
+#   p2 <- 2 * pnorm(-abs(z2))
+#   sign1 <- p1 < (1*10^(-p))
+#   sign2 <- p2 < (1*10^(-p))
+# }
+# 
+# overlap <- function(p, i, j){
+#   sign_i <- (mat[,i] < (1*10^(-p)))
+#   sign_j <- (mat[,j] < (1*10^(-p)))
+#   #n <- sum(sign_i)
+#   overlap <- sum(sign_i & sign_j)
+#   m <- sum(sign_i)
+#   n <- 10437951-m
+#   k <- sum(sign_j)
+#   #pval <- binom.test(overlap, sum(sign_j), p)$p.value
+#   pval <- phyper(q = overlap, m = m, n = n, k = k, lower.tail = F, log.p = T)
+#   names(overlap) <- pval
+#   return(overlap)
+#  # return(list(overlap = overlap, log.pval = pval))
+# }
 
 MakeMatAndCalcOverlap <- function(metric, subtype, phenos, minp = 20){
   #phenos <- c("CCSc", "CCSp", "TOAST", "union_original", "intersect")
